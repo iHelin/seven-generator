@@ -1,0 +1,25 @@
+server:
+  port: 80
+
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://121.4.87.152:3306/information_schema?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 246260
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  freemarker:
+    request-context-attribute: request
+    cache: true
+
+mybatis-plus:
+  mapperLocations: classpath:mapper/**/*.xml
+pagehelper:
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+logging:
+  level:
+    io.github.ihelin.seven: debug
