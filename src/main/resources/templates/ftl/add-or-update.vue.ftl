@@ -75,8 +75,8 @@
                 this.$refs['dataForm'].validate((valid) => {
                     if (valid) {
                         this.$http({
-                            url: `/${moduleName}/${pathName}/${r'${!this.dataForm'}.${pk.attrname} ? 'save' : 'update'}`,
-                            method: "post",
+                            url: `/${moduleName}/${pathName}/${r'${this.dataForm'}.${pk.attrname} ? 'update' : 'save'}`,
+                            method: this.dataForm.${pk.attrname} ? 'put' : 'post',
                             data: {
                                 <#list columns as column>
                                 <#if column.columnName != pk.columnName>
