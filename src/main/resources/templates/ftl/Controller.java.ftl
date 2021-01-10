@@ -3,13 +3,8 @@ package ${package}.${moduleName}.controller;
 import java.util.Arrays;
 import java.util.Map;
 
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ${package}.${moduleName}.entity.${className}Entity;
 import ${package}.${moduleName}.service.${className}Service;
@@ -33,8 +28,7 @@ public class ${className}Controller {
     /**
      * 列表
      */
-    @RequestMapping("/list")
-    // @RequiresPermissions("${moduleName}:${pathName}:list")
+    @GetMapping("/list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = ${classname}Service.queryPage(params);
 
@@ -45,8 +39,7 @@ public class ${className}Controller {
     /**
      * 信息
      */
-    @RequestMapping("/info/{${pk.attrname}}")
-    //@RequiresPermissions("${moduleName}:${pathName}:info")
+    @GetMapping("/info/{${pk.attrname}}")
     public R info(@PathVariable("${pk.attrname}") ${pk.attrType} ${pk.attrname}){
 		${className}Entity ${classname} = ${classname}Service.getById(${pk.attrname});
 
@@ -54,10 +47,9 @@ public class ${className}Controller {
     }
 
     /**
-     * 保存
+     * 新增
      */
-    @RequestMapping("/save")
-    //@RequiresPermissions("${moduleName}:${pathName}:save")
+    @PostMapping("/save")
     public R save(@RequestBody ${className}Entity ${classname}){
 		${classname}Service.save(${classname});
 
@@ -67,8 +59,7 @@ public class ${className}Controller {
     /**
      * 修改
      */
-    @RequestMapping("/update")
-    //@RequiresPermissions("${moduleName}:${pathName}:update")
+    @PutMapping("/update")
     public R update(@RequestBody ${className}Entity ${classname}){
 		${classname}Service.updateById(${classname});
 
@@ -78,8 +69,7 @@ public class ${className}Controller {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
-    //@RequiresPermissions("${moduleName}:${pathName}:delete")
+    @DeleteMapping("/delete")
     public R delete(@RequestBody ${pk.attrType}[] ${pk.attrname}s){
 		${classname}Service.removeByIds(Arrays.asList(${pk.attrname}s));
 
