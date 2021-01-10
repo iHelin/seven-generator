@@ -62,7 +62,7 @@
 </template>
 
 <script>
-    import AddOrUpdate from './'
+    import AddOrUpdate from './${pathName}-add-or-update.vue'
 
     export default {
         data() {
@@ -90,7 +90,7 @@
             getDataList() {
                 this.dataListLoading = true
                 this.$http({
-                    url: this.$http.adornUrl('/${moduleName}/${pathName}/list'),
+                    url: '/${moduleName}/${pathName}/list',
                     method: 'get',
                     params: this.$http.adornParams({
                         'page': this.pageIndex,
@@ -141,7 +141,7 @@
                     type: 'warning'
                 }).then(() => {
                     this.$http({
-                        url: this.$http.adornUrl('/${moduleName}/${pathName}/delete'),
+                        url: '/${moduleName}/${pathName}/delete',
                         method: 'post',
                         data: this.$http.adornData(ids, false)
                     }).then(({data}) => {
