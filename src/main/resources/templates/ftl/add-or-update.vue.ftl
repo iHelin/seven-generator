@@ -57,12 +57,12 @@
                         this.$http({
                             url: `/${moduleName}/${pathName}/info/${r'${this.dataForm'}.${pk.attrname}}`,
                             method: 'get',
-                            params: this.$http.adornParams()
+                            params: {}
                         }).then(({data}) => {
                             if (data && data.code === 0) {
                                 <#list columns as column>
                                 <#if column.columnName != pk.columnName>
-                                this.dataForm.${column.attrname} = data.${classname}.${column.attrname}
+                                this.dataForm.${column.attrname} = data.data.${column.attrname}
                                 </#if>
                                 </#list>
                             }
