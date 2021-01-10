@@ -26,9 +26,8 @@ public class PageController {
      */
     @GetMapping("/code/{schemaName}")
     public void code(@PathVariable String schemaName, String tableNames, HttpServletResponse response) throws IOException {
-        generatorService.generatorCode(schemaName, tableNames.split(","), response.getOutputStream());
-
         response.setHeader("Content-Disposition", "attachment; filename=\"seven.zip\"");
         response.setContentType("application/octet-stream; charset=UTF-8");
+        generatorService.generatorCode(schemaName, tableNames.split(","), response.getOutputStream());
     }
 }
