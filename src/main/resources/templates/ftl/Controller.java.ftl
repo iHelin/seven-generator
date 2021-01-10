@@ -22,6 +22,7 @@ import ${package}.common.utils.R;
 @RestController
 @RequestMapping("${moduleName}/${pathName}")
 public class ${className}Controller {
+
     @Autowired
     private ${className}Service ${classname}Service;
 
