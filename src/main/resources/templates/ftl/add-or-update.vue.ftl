@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-            :title="!dataForm.id ? '新增' : '修改'"
+            :title="!dataForm.${pk.attrname} ? '新增' : '修改'"
             :close-on-click-modal="false"
             :visible.sync="visible">
         <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()"
@@ -77,15 +77,15 @@
                         this.$http({
                             url: `/${moduleName}/${pathName}/${r'${!this.dataForm'}.${pk.attrname} ? 'save' : 'update'}`,
                             method: "post",
-                            data: this.$http.adornData({
+                            data: {
                                 <#list columns as column>
                                 <#if column.columnName != pk.columnName>
-                                "${column.attrname}": this.dataForm.${column.attrname} || undefined,
+                                "${column.attrname}": this.dataForm.${column.attrname},
                                 <#else>
                                 "${column.attrname}": this.dataForm.${column.attrname}<#if column_index+1 != columns?size>, </#if>
                                 </#if>
                                 </#list>
-                            })
+                            }
                         }).then(({data}) => {
                             if (data && data.code === 0) {
                                 this.$message({
