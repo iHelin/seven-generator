@@ -1,15 +1,10 @@
 package io.github.ihelin.seven.generator.utils;
 
-import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * 异常处理器
@@ -17,35 +12,24 @@ import javax.servlet.http.HttpServletResponse;
  * @author iHelin ihelin@outlook.com
  * @since 2021-01-07 12:43
  */
-@Component
-public class RRExceptionHandler implements HandlerExceptionResolver {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+@RestControllerAdvice(basePackages = "io.github.ihelin.seven.generator.controller")
+public class RRExceptionHandler {
 
-    @Override
-    public ModelAndView resolveException(HttpServletRequest request,
-                                         HttpServletResponse response, Object handler, Exception ex) {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @ExceptionHandler(value = Throwable.class)
+    public R handleException(Throwable throwable) {
         R r = new R();
-        try {
-            response.setContentType("application/json;charset=utf-8");
-            response.setCharacterEncoding("utf-8");
-
-            if (ex instanceof RRException) {
-                r.put("code", ((RRException) ex).getCode());
-                r.put("msg", ((RRException) ex).getMessage());
-            } else if (ex instanceof DuplicateKeyException) {
-                r = R.error("数据库中已存在该记录");
-            } else {
-                r = R.error();
-            }
-
-            //记录异常日志
-            logger.error(ex.getMessage(), ex);
-
-            String json = JSON.toJSONString(r);
-            response.getWriter().print(json);
-        } catch (Exception e) {
-            logger.error("RRExceptionHandler 异常处理失败", e);
+        if (throwable instanceof RRException) {
+            r.put("code", ((RRException) throwable).getCode());
+            r.put("msg", throwable.getMessage());
+        } else if (throwable instanceof DuplicateKeyException) {
+            r = R.error("数据库中已存在该记录");
+        } else {
+            r = R.error();
         }
-        return new ModelAndView();
+        //记录异常日志
+        logger.error("系统异常", throwable);
+        return r;
     }
 }
