@@ -1,7 +1,6 @@
 package io.github.ihelin.seven.generator.service;
 
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import io.github.ihelin.seven.generator.dao.MySQLGeneratorDao;
 import io.github.ihelin.seven.generator.entity.ColumnEntity;
 import io.github.ihelin.seven.generator.entity.TableEntity;
@@ -15,12 +14,12 @@ import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.freemarker.FreeMarkerProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -43,6 +42,9 @@ public class GeneratorService {
     @Autowired
     private MySQLGeneratorDao mySQLGeneratorDao;
 
+    @Autowired
+    private FreeMarkerProperties freeMarkerProperties;
+
     /**
      * 根据数据库名查找所有的表
      *
@@ -53,29 +55,16 @@ public class GeneratorService {
         return mySQLGeneratorDao.queryTableBySchemaName(schemaName);
     }
 
-    public static List<String> getTemplates() {
-        List<String> templates = new ArrayList<>();
-        templates.add("add-or-update.vue.ftl");
-        templates.add("Controller.java.ftl");
-        templates.add("Dao.java.ftl");
-        templates.add("Dao.xml.ftl");
-        templates.add("Entity.java.ftl");
-        templates.add("index.vue.ftl");
-        templates.add("menu.sql.ftl");
-        templates.add("Service.java.ftl");
-        templates.add("ServiceImpl.java.ftl");
-        return templates;
-    }
-
     public void generatorCode(String schemaName, String[] tableNames, OutputStream outputStream) {
         ZipOutputStream zip = new ZipOutputStream(outputStream);
         for (String tableName : tableNames) {
             //查询表信息
-            TableEntity table = mySQLGeneratorDao.queryTable(schemaName, tableName);
+            TableEntity tableEntity = mySQLGeneratorDao.queryTable(schemaName, tableName);
             //查询列信息
             List<ColumnEntity> columns = mySQLGeneratorDao.queryColumns(schemaName, tableName);
             //生成代码
-            generatorCode(table, columns, zip);
+            tableEntity.setColumns(columns);
+            generatorCode(tableEntity, zip);
         }
 
         IOUtils.closeQuietly(zip);
@@ -85,74 +74,20 @@ public class GeneratorService {
      * 生成代码
      */
     public void generatorCode(TableEntity tableEntity,
-                              List<ColumnEntity> columns,
                               ZipOutputStream zip) {
-
         Configuration config = getConfig();
-
-        //表名转换成Java类名
-        String className = tableToJava(tableEntity.getTableName(), config.getStringArray("tablePrefix"));
-        tableEntity.setClassName(className);
-        tableEntity.setClassname(StringUtils.uncapitalize(className));
-
-        //配置信息
-        boolean hasBigDecimal = false;
-        boolean hasList = false;
-
-        //列信息
-        for (ColumnEntity columnEntity : columns) {
-            //列名转换成Java属性名
-            String attrName = columnToJava(columnEntity.getColumnName());
-            columnEntity.setAttrName(attrName);
-            columnEntity.setAttrname(StringUtils.uncapitalize(attrName));
-
-            //列的数据类型，转换成Java类型
-            String attrType = config.getString(columnEntity.getDataType());
-            columnEntity.setAttrType(attrType);
-
-            if (!hasBigDecimal && "BigDecimal".equals(attrType)) {
-                hasBigDecimal = true;
-            }
-            if (!hasList && "array".equals(columnEntity.getExtra())) {
-                hasList = true;
-            }
-            //是否主键
-            if ("PRI".equalsIgnoreCase(columnEntity.getColumnKey()) && tableEntity.getPk() == null) {
-                tableEntity.setPk(columnEntity);
-            }
-
-        }
-        tableEntity.setColumns(columns);
-
-        //没主键，则第一个字段为主键
-        if (tableEntity.getPk() == null) {
-            tableEntity.setPk(tableEntity.getColumns().get(0));
-        }
-
-        //封装模板数据
-        Map<String, Object> map = new HashMap<>();
-        map.put("tableEntity", tableEntity);
-        map.put("hasBigDecimal", hasBigDecimal);
-        map.put("hasList", hasList);
-        map.put("package", config.getString("package"));
-        map.put("moduleName", config.getString("moduleName"));
-        map.put("author", config.getString("author"));
-        map.put("email", config.getString("email"));
-        map.put("datetime", new Date());
 
         //获取模板列表
         List<String> templates = getTemplates();
         for (String template : templates) {
             //渲染模板
             try {
-                Template freemarkerTemplate = freeMarkerConfigurer.getConfiguration().getTemplate("ftl/" + template);
-                String templateString = FreeMarkerTemplateUtils.processTemplateIntoString(freemarkerTemplate, map);
-
+                String codeText = generateCodeText(tableEntity, template);
                 //添加到zip
                 zip.putNextEntry(new ZipEntry(getFileName(template, tableEntity.getClassName(), config.getString("package"), config.getString("moduleName"))));
-                IOUtils.write(templateString, zip, "UTF-8");
+                IOUtils.write(codeText, zip, "UTF-8");
                 zip.closeEntry();
-            } catch (IOException | TemplateException e) {
+            } catch (Exception e) {
                 throw new RRException("渲染模板失败，表名：" + tableEntity.getTableName(), e);
             }
         }
@@ -248,21 +183,24 @@ public class GeneratorService {
         return mySQLGeneratorDao.querySchemas();
     }
 
-    /**
-     * 生成代码片段
-     *
-     * @param schemaName 数据库名
-     * @param tableName  表名
-     * @param filename   文件名
-     * @return 代码片段
-     */
     public String generateCodeText(String schemaName, String tableName, String filename) {
         //查询表信息
         TableEntity tableEntity = mySQLGeneratorDao.queryTable(schemaName, tableName);
 
         //查询列信息
         List<ColumnEntity> columns = mySQLGeneratorDao.queryColumns(schemaName, tableName);
+        tableEntity.setColumns(columns);
+        return generateCodeText(tableEntity, filename);
+    }
 
+    /**
+     * 生成代码片段
+     *
+     * @param tableEntity tableEntity
+     * @param filename    文件名
+     * @return 代码片段
+     */
+    public String generateCodeText(TableEntity tableEntity, String filename) {
         Configuration config = getConfig();
 
         //表名转换成Java类名
@@ -275,7 +213,7 @@ public class GeneratorService {
         boolean hasList = false;
 
         //列信息
-        for (ColumnEntity columnEntity : columns) {
+        for (ColumnEntity columnEntity : tableEntity.getColumns()) {
             //列名转换成Java属性名
             String attrName = columnToJava(columnEntity.getColumnName());
             columnEntity.setAttrName(attrName);
@@ -297,7 +235,6 @@ public class GeneratorService {
             }
 
         }
-        tableEntity.setColumns(columns);
 
         //没主键，则第一个字段为主键
         if (tableEntity.getPk() == null) {
@@ -317,12 +254,25 @@ public class GeneratorService {
         //渲染模板
         String resultString = "";
         try {
-            Template freemarkerTemplate = freeMarkerConfigurer.getConfiguration().getTemplate("ftl/" + filename + ".ftl");
+            Template freemarkerTemplate = freeMarkerConfigurer.getConfiguration().getTemplate("ftl/" + filename + freeMarkerProperties.getSuffix());
             resultString = FreeMarkerTemplateUtils.processTemplateIntoString(freemarkerTemplate, map);
         } catch (Exception e) {
             logger.warn("解析freemarker异常", e);
         }
         return resultString;
+    }
 
+    private static List<String> getTemplates() {
+        List<String> templates = new ArrayList<>();
+        templates.add("add-or-update.vue");
+        templates.add("Controller.java");
+        templates.add("Dao.java");
+        templates.add("Dao.xml");
+        templates.add("Entity.java");
+        templates.add("index.vue");
+        templates.add("menu.sql");
+        templates.add("Service.java");
+        templates.add("ServiceImpl.java");
+        return templates;
     }
 }
