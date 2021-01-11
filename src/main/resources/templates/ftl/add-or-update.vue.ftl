@@ -47,8 +47,8 @@
         },
         methods: {
             init(id) {
-                this.dataForm.${pk.attrname} = id || 0
-                this.visible = true
+                this.dataForm.${pk.attrname} = id;
+                this.visible = true;
                 this.$nextTick(() => {
                     this.$refs['dataForm'].resetFields()
                     if (this.dataForm.${pk.attrname}) {
