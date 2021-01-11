@@ -30,4 +30,12 @@ public class PageController {
         response.setContentType("application/octet-stream; charset=UTF-8");
         generatorService.generatorCode(schemaName, tableNames.split(","), response.getOutputStream());
     }
+
+    /**
+     * test
+     */
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
 }

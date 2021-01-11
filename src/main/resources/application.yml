@@ -12,10 +12,7 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
   freemarker:
     request-context-attribute: request
-    cache: true
-
-mybatis-plus:
-  mapperLocations: classpath:mapper/**/*.xml
+    cache: false
 
 logging:
   level:
