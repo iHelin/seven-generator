@@ -2,17 +2,17 @@ package ${package}.${moduleName}.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import ${package}.common.utils.PageUtils;
-import ${package}.${moduleName}.entity.${className}Entity;
+import ${package}.${moduleName}.entity.${tableEntity.className}Entity;
 
 import java.util.Map;
 
 /**
- * ${comments}
+ * ${tableEntity.tableComment}
  *
  * @author ${author} ${email}
- * @since ${datetime}
+ * @since ${datetime?string('yyyy-MM-dd HH:mm:ss')}
  */
-public interface ${className}Service extends IService<${className}Entity> {
+public interface ${tableEntity.className}Service extends IService<${tableEntity.className}Entity> {
 
     PageUtils queryPage(Map<String, Object> params);
 }

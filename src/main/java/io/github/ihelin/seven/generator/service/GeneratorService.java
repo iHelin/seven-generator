@@ -5,7 +5,6 @@ import freemarker.template.TemplateException;
 import io.github.ihelin.seven.generator.dao.MySQLGeneratorDao;
 import io.github.ihelin.seven.generator.entity.ColumnEntity;
 import io.github.ihelin.seven.generator.entity.TableEntity;
-import io.github.ihelin.seven.generator.utils.DateUtils;
 import io.github.ihelin.seven.generator.utils.RRException;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -13,6 +12,8 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
@@ -33,6 +34,8 @@ import java.util.zip.ZipOutputStream;
  */
 @Component
 public class GeneratorService {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private FreeMarkerConfigurer freeMarkerConfigurer;
@@ -58,9 +61,9 @@ public class GeneratorService {
         ZipOutputStream zip = new ZipOutputStream(outputStream);
         for (String tableName : tableNames) {
             //查询表信息
-            Map<String, String> table = queryTable(schemaName, tableName);
+            TableEntity table = mySQLGeneratorDao.queryTable(schemaName, tableName);
             //查询列信息
-            List<Map<String, String>> columns = queryColumns(schemaName, tableName);
+            List<ColumnEntity> columns = mySQLGeneratorDao.queryColumns(schemaName, tableName);
             //生成代码
             generatorCode(table, columns, zip);
         }
@@ -75,66 +78,48 @@ public class GeneratorService {
         return list;
     }
 
-    public Map<String, String> queryTable(String schemaName, String tableName) {
-        return mySQLGeneratorDao.queryTable(schemaName, tableName);
-    }
-
-    public List<Map<String, String>> queryColumns(String schemaName, String tableName) {
-        return mySQLGeneratorDao.queryColumns(schemaName, tableName);
-    }
-
     /**
      * 生成代码
      */
-    public void generatorCode(Map<String, String> table,
-                              List<Map<String, String>> columns,
+    public void generatorCode(TableEntity tableEntity,
+                              List<ColumnEntity> columns,
                               ZipOutputStream zip) {
-        //配置信息
+
         Configuration config = getConfig();
-        boolean hasBigDecimal = false;
-        boolean hasList = false;
-        //表信息
-        TableEntity tableEntity = new TableEntity();
-        tableEntity.setTableName(table.get("tableName"));
-        tableEntity.setComments(table.get("tableComment"));
+
         //表名转换成Java类名
         String className = tableToJava(tableEntity.getTableName(), config.getStringArray("tablePrefix"));
         tableEntity.setClassName(className);
         tableEntity.setClassname(StringUtils.uncapitalize(className));
 
-        //列信息
-        List<ColumnEntity> columnList = new ArrayList<>();
-        for (Map<String, String> column : columns) {
-            ColumnEntity columnEntity = new ColumnEntity();
-            columnEntity.setColumnName(column.get("columnName"));
-            columnEntity.setDataType(column.get("dataType"));
-            columnEntity.setComments(column.get("columnComment"));
-            columnEntity.setExtra(column.get("extra"));
+        //配置信息
+        boolean hasBigDecimal = false;
+        boolean hasList = false;
 
+        //列信息
+        for (ColumnEntity columnEntity : columns) {
             //列名转换成Java属性名
             String attrName = columnToJava(columnEntity.getColumnName());
             columnEntity.setAttrName(attrName);
             columnEntity.setAttrname(StringUtils.uncapitalize(attrName));
 
             //列的数据类型，转换成Java类型
-            String attrType = config.getString(columnEntity.getDataType(), columnToJava(columnEntity.getDataType()));
+            String attrType = config.getString(columnEntity.getDataType());
             columnEntity.setAttrType(attrType);
 
-
-            if (!hasBigDecimal && attrType.equals("BigDecimal")) {
+            if (!hasBigDecimal && "BigDecimal".equals(attrType)) {
                 hasBigDecimal = true;
             }
             if (!hasList && "array".equals(columnEntity.getExtra())) {
                 hasList = true;
             }
             //是否主键
-            if ("PRI".equalsIgnoreCase(column.get("columnKey")) && tableEntity.getPk() == null) {
+            if ("PRI".equalsIgnoreCase(columnEntity.getColumnKey()) && tableEntity.getPk() == null) {
                 tableEntity.setPk(columnEntity);
             }
 
-            columnList.add(columnEntity);
         }
-        tableEntity.setColumns(columnList);
+        tableEntity.setColumns(columns);
 
         //没主键，则第一个字段为主键
         if (tableEntity.getPk() == null) {
@@ -143,20 +128,14 @@ public class GeneratorService {
 
         //封装模板数据
         Map<String, Object> map = new HashMap<>();
-        map.put("tableName", tableEntity.getTableName());
-        map.put("comments", tableEntity.getComments());
-        map.put("pk", tableEntity.getPk());
-        map.put("className", tableEntity.getClassName());
-        map.put("classname", tableEntity.getClassname());
-        map.put("pathName", tableEntity.getClassname().toLowerCase());
-        map.put("columns", tableEntity.getColumns());
+        map.put("tableEntity", tableEntity);
         map.put("hasBigDecimal", hasBigDecimal);
         map.put("hasList", hasList);
         map.put("package", config.getString("package"));
         map.put("moduleName", config.getString("moduleName"));
         map.put("author", config.getString("author"));
         map.put("email", config.getString("email"));
-        map.put("datetime", DateUtils.format(new Date(), DateUtils.DATE_TIME_PATTERN));
+        map.put("datetime", new Date());
 
         //获取模板列表
         List<String> templates = getTemplates();
@@ -258,7 +237,76 @@ public class GeneratorService {
     }
 
     public List<String> listAllSchema() {
-        List<String> schemaNames = mySQLGeneratorDao.querySchemas();
-        return schemaNames;
+        return mySQLGeneratorDao.querySchemas();
+    }
+
+    public String generateCode(String schemaName, String tableName, String filename) {
+        //查询表信息
+        TableEntity tableEntity = mySQLGeneratorDao.queryTable(schemaName, tableName);
+
+        //查询列信息
+        List<ColumnEntity> columns = mySQLGeneratorDao.queryColumns(schemaName, tableName);
+
+        Configuration config = getConfig();
+
+        //表名转换成Java类名
+        String className = tableToJava(tableEntity.getTableName(), config.getStringArray("tablePrefix"));
+        tableEntity.setClassName(className);
+        tableEntity.setClassname(StringUtils.uncapitalize(className));
+
+        //配置信息
+        boolean hasBigDecimal = false;
+        boolean hasList = false;
+
+        //列信息
+        for (ColumnEntity columnEntity : columns) {
+            //列名转换成Java属性名
+            String attrName = columnToJava(columnEntity.getColumnName());
+            columnEntity.setAttrName(attrName);
+            columnEntity.setAttrname(StringUtils.uncapitalize(attrName));
+
+            //列的数据类型，转换成Java类型
+            String attrType = config.getString(columnEntity.getDataType());
+            columnEntity.setAttrType(attrType);
+
+            if (!hasBigDecimal && "BigDecimal".equals(attrType)) {
+                hasBigDecimal = true;
+            }
+            if (!hasList && "array".equals(columnEntity.getExtra())) {
+                hasList = true;
+            }
+            //是否主键
+            if ("PRI".equalsIgnoreCase(columnEntity.getColumnKey()) && tableEntity.getPk() == null) {
+                tableEntity.setPk(columnEntity);
+            }
+
+        }
+        tableEntity.setColumns(columns);
+
+        //没主键，则第一个字段为主键
+        if (tableEntity.getPk() == null) {
+            tableEntity.setPk(tableEntity.getColumns().get(0));
+        }
+
+        //封装模板数据
+        Map<String, Object> map = new HashMap<>();
+        map.put("tableEntity", tableEntity);
+        map.put("hasBigDecimal", hasBigDecimal);
+        map.put("hasList", hasList);
+        map.put("package", config.getString("package"));
+        map.put("moduleName", config.getString("moduleName"));
+        map.put("author", config.getString("author"));
+        map.put("email", config.getString("email"));
+        map.put("datetime", new Date());
+        //渲染模板
+        String resultString = "";
+        try {
+            Template freemarkerTemplate = freeMarkerConfigurer.getConfiguration().getTemplate("ftl/" + filename + ".ftl");
+            resultString = FreeMarkerTemplateUtils.processTemplateIntoString(freemarkerTemplate, map);
+        } catch (Exception e) {
+            logger.warn("解析freemarker异常", e);
+        }
+        return resultString;
+
     }
 }

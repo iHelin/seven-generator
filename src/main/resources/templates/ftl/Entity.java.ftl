@@ -4,32 +4,33 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 <#if hasBigDecimal==true>
-    import java.math.BigDecimal;
+import java.math.BigDecimal;
 </#if>
 import java.io.Serializable;
 import java.util.Date;
 
 /**
-* ${comments}
+* ${tableEntity.tableComment}
 *
 * @author ${author} ${email}
-* @since ${datetime}
+* @since ${datetime?string('yyyy-MM-dd HH:mm:ss')}
 */
-@TableName("${tableName}")
-public class ${className}Entity implements Serializable {
-private static final long serialVersionUID = 1L;
+@TableName("${tableEntity.tableName}")
+public class ${tableEntity.className}Entity implements Serializable {
 
-<#list columns as column>
+    private static final long serialVersionUID = 1L;
+
+<#list tableEntity.columns as column>
     /**
-    * ${column.comments}
+    * ${column.columnComment}
     */
-    <#if column.columnName == pk.columnName>
+    <#if column.columnName == tableEntity.pk.columnName>
         @TableId
     </#if>
     private ${column.attrType} ${column.attrname};
 </#list>
 
-<#list columns as column>
+<#list tableEntity.columns as column>
 
     public ${column.attrType} get${column.attrName}(){
         return ${column.attrname};
@@ -42,8 +43,8 @@ private static final long serialVersionUID = 1L;
 
     @Override
     public String toString() {
-        return "${className}Entity{" +
-<#list columns as column>
+        return "${tableEntity.className}Entity{" +
+<#list tableEntity.columns as column>
         "${column.attrname}='" + ${column.attrname} + '\'' +
 </#list>
         '}';

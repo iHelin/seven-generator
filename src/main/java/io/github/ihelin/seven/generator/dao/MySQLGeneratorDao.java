@@ -1,6 +1,9 @@
 package io.github.ihelin.seven.generator.dao;
 
 
+import io.github.ihelin.seven.generator.entity.ColumnEntity;
+import io.github.ihelin.seven.generator.entity.TableEntity;
+
 import java.util.List;
 import java.util.Map;
 
@@ -16,8 +19,8 @@ public interface MySQLGeneratorDao {
 
     List<Map<String, Object>> queryList(Map<String, Object> map);
 
-    Map<String, String> queryTable(String schemaName, String tableName);
+    TableEntity queryTable(String schemaName, String tableName);
 
-    List<Map<String, String>> queryColumns(String schemaName, String tableName);
+    List<ColumnEntity> queryColumns(String schemaName, String tableName);
 
 }

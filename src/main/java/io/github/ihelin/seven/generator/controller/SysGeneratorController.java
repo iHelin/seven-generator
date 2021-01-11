@@ -42,4 +42,13 @@ public class SysGeneratorController {
         return R.ok().put("data", data);
     }
 
+    /**
+     * 生成对应代码
+     */
+    @RequestMapping("/code")
+    public R code(String schemaName, String tableName, String fileName) {
+        String code = generatorService.generateCode(schemaName, tableName, fileName);
+        return R.ok().put("data", code);
+    }
+
 }

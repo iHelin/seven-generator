@@ -6,10 +6,10 @@
             </el-form-item>
             <el-form-item>
                 <el-button @click="getDataList()">查询</el-button>
-                <el-button v-if="isAuth('${moduleName}:${pathName}:save')" type="primary" @click="addOrUpdateHandle()">
+                <el-button v-if="isAuth('${moduleName}:${tableEntity.classname?lower_case}:save')" type="primary" @click="addOrUpdateHandle()">
                     新增
                 </el-button>
-                <el-button v-if="isAuth('${moduleName}:${pathName}:delete')" type="danger" @click="deleteHandle()"
+                <el-button v-if="isAuth('${moduleName}:${tableEntity.classname?lower_case}:delete')" type="danger" @click="deleteHandle()"
                            :disabled="dataListSelections.length <= 0">批量删除
                 </el-button>
             </el-form-item>
@@ -26,12 +26,12 @@
                     align="center"
                     width="50">
             </el-table-column>
-            <#list columns as column>
+            <#list tableEntity.columns as column>
                 <el-table-column
                         prop="${column.attrname}"
                         header-align="center"
                         align="center"
-                        label="${column.comments}">
+                        label="${column.columnComment}">
                 </el-table-column>
             </#list>
             <el-table-column
@@ -41,9 +41,9 @@
                     width="150"
                     label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.${pk.attrname})">修改
+                    <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.${tableEntity.pk.attrname})">修改
                     </el-button>
-                    <el-button type="text" size="small" @click="deleteHandle(scope.row.${pk.attrname})">删除</el-button>
+                    <el-button type="text" size="small" @click="deleteHandle(scope.row.${tableEntity.pk.attrname})">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -62,7 +62,7 @@
 </template>
 
 <script>
-    import AddOrUpdate from './${pathName}-add-or-update'
+    import AddOrUpdate from './${tableEntity.classname?lower_case}-add-or-update'
 
     export default {
         data() {
@@ -90,7 +90,7 @@
             getDataList() {
                 this.dataListLoading = true
                 this.$http({
-                    url: '/${moduleName}/${pathName}/list',
+                    url: '/${moduleName}/${tableEntity.classname?lower_case}/list',
                     method: 'get',
                     params: {
                         'page': this.pageIndex,
@@ -133,7 +133,7 @@
             // 删除
             deleteHandle(id) {
                 let ids = id ? [id] : this.dataListSelections.map(item => {
-                    return item.${pk.attrname}
+                    return item.${tableEntity.pk.attrname}
                 })
                 this.$confirm(${r"`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`"}, '提示', {
                     confirmButtonText: '确定',
@@ -141,7 +141,7 @@
                     type: 'warning'
                 }).then(() => {
                     this.$http({
-                        url: '/${moduleName}/${pathName}/delete',
+                        url: '/${moduleName}/${tableEntity.classname?lower_case}/delete',
                         method: 'delete',
                         data: this.$http.adornData(ids, false)
                     }).then(({data}) => {

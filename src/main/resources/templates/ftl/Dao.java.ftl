@@ -1,16 +1,14 @@
 package ${package}.${moduleName}.dao;
 
-import ${package}.${moduleName}.entity.${className}Entity;
+import ${package}.${moduleName}.entity.${tableEntity.className}Entity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
 
 /**
- * ${comments}
+ * ${tableEntity.tableComment}
  * 
  * @author ${author} ${email}
- * @since ${datetime}
+ * @since ${datetime?string('yyyy-MM-dd HH:mm:ss')}
  */
-@Mapper
-public interface ${className}Dao extends BaseMapper<${className}Entity> {
+public interface ${tableEntity.className}Dao extends BaseMapper<${tableEntity.className}Entity> {
 	
 }

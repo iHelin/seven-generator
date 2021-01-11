@@ -8,24 +8,24 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ${package}.common.utils.PageUtils;
 import ${package}.common.utils.Query;
 
-import ${package}.${moduleName}.dao.${className}Dao;
-import ${package}.${moduleName}.entity.${className}Entity;
-import ${package}.${moduleName}.service.${className}Service;
+import ${package}.${moduleName}.dao.${tableEntity.className}Dao;
+import ${package}.${moduleName}.entity.${tableEntity.className}Entity;
+import ${package}.${moduleName}.service.${tableEntity.className}Service;
 
 /**
-* ${comments}
+* ${tableEntity.tableComment}
 *
 * @author ${author} ${email}
-* @since ${datetime}
+* @since ${datetime?string('yyyy-MM-dd HH:mm:ss')}
 */
-@Service("${classname}Service")
-public class ${className}ServiceImpl extends ServiceImpl<${className}Dao, ${className}Entity> implements ${className}Service {
+@Service("${tableEntity.classname}Service")
+public class ${tableEntity.className}ServiceImpl extends ServiceImpl<${tableEntity.className}Dao, ${tableEntity.className}Entity> implements ${tableEntity.className}Service {
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<${className}Entity> page = this.page(
-                new Query<${className}Entity>().getPage(params),
-                new QueryWrapper<${className}Entity>()
+        IPage<${tableEntity.className}Entity> page = this.page(
+                new Query<${tableEntity.className}Entity>().getPage(params),
+                new QueryWrapper<${tableEntity.className}Entity>()
         );
 
         return new PageUtils(page);
