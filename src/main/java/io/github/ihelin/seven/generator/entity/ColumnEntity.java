@@ -16,7 +16,7 @@ public class ColumnEntity {
     //列名备注
     private String columnComment;
 
-	private String columnKey;
+    private String columnKey;
 
     //属性名称(第一个字母大写)，如：user_name => UserName
     private String attrName;
@@ -86,11 +86,11 @@ public class ColumnEntity {
         this.extra = extra;
     }
 
-	public String getColumnKey() {
-		return columnKey;
-	}
+    public String getColumnKey() {
+        return columnKey;
+    }
 
-	public void setColumnKey(String columnKey) {
-		this.columnKey = columnKey;
-	}
+    public void setColumnKey(String columnKey) {
+        this.columnKey = columnKey;
+    }
 }
