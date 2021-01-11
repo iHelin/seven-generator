@@ -3,10 +3,7 @@ package io.github.ihelin.seven.generator.controller;
 import io.github.ihelin.seven.generator.service.GeneratorService;
 import io.github.ihelin.seven.generator.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -46,7 +43,9 @@ public class SysGeneratorController {
      * 生成对应代码
      */
     @RequestMapping("/code")
-    public R code(String schemaName, String tableName, String fileName) {
+    public R code(@RequestParam String schemaName,
+                  @RequestParam String tableName,
+                  @RequestParam String fileName) {
         String code = generatorService.generateCode(schemaName, tableName, fileName);
         return R.ok().put("data", code);
     }

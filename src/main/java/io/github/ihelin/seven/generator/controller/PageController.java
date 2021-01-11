@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -25,7 +26,9 @@ public class PageController {
      * 生成代码
      */
     @GetMapping("/code/{schemaName}")
-    public void code(@PathVariable String schemaName, String tableNames, HttpServletResponse response) throws IOException {
+    public void code(@PathVariable String schemaName,
+                     @RequestParam String tableNames,
+                     HttpServletResponse response) throws IOException {
         response.setHeader("Content-Disposition", "attachment; filename=\"seven.zip\"");
         response.setContentType("application/octet-stream; charset=UTF-8");
         generatorService.generatorCode(schemaName, tableNames.split(","), response.getOutputStream());
