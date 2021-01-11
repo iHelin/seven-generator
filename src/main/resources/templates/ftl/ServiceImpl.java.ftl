@@ -18,7 +18,7 @@ import ${package}.${moduleName}.service.${tableEntity.className}Service;
 * @author ${author} ${email}
 * @since ${datetime?string('yyyy-MM-dd HH:mm:ss')}
 */
-@Service("${tableEntity.classname}Service")
+@Service
 public class ${tableEntity.className}ServiceImpl extends ServiceImpl<${tableEntity.className}Dao, ${tableEntity.className}Entity> implements ${tableEntity.className}Service {
 
     @Override

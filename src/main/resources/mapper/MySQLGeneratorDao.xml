@@ -8,22 +8,23 @@
         from information_schema.`SCHEMATA`;
     </select>
 
-    <select id="queryList" resultType="map">
+    <select id="queryTableBySchemaName" resultType="io.github.ihelin.seven.generator.entity.TableEntity">
         select table_name tableName, engine, table_comment tableComment, create_time createTime
         from information_schema.tables
         where table_schema = #{schemaName}
-        and table_type = 'BASE TABLE'
-        <if test="tableName != null and tableName.trim() != ''">
-            and table_name like concat('%', #{tableName}, '%')
-        </if>
-        order by create_time desc
     </select>
 
     <select id="queryTable" resultType="io.github.ihelin.seven.generator.entity.TableEntity">
         select table_name tableName, engine, table_comment tableComment, create_time createTime
         from information_schema.tables
-        where table_schema = #{schemaName}
-          and table_name = #{tableName}
+        <where>
+            <if test="schemaName!=null">
+                AND table_schema = #{schemaName}
+            </if>
+            <if test="schemaName!=null">
+                AND table_name = #{tableName}
+            </if>
+        </where>
     </select>
 
     <select id="queryColumns" resultType="io.github.ihelin.seven.generator.entity.ColumnEntity">

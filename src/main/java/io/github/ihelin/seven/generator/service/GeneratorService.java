@@ -43,6 +43,16 @@ public class GeneratorService {
     @Autowired
     private MySQLGeneratorDao mySQLGeneratorDao;
 
+    /**
+     * 根据数据库名查找所有的表
+     *
+     * @param schemaName 数据库名
+     * @return 表信息
+     */
+    public List<TableEntity> getTablesBySchemaName(String schemaName) {
+        return mySQLGeneratorDao.queryTableBySchemaName(schemaName);
+    }
+
     public static List<String> getTemplates() {
         List<String> templates = new ArrayList<>();
         templates.add("add-or-update.vue.ftl");
@@ -69,13 +79,6 @@ public class GeneratorService {
         }
 
         IOUtils.closeQuietly(zip);
-    }
-
-    public List<Map<String, Object>> queryTables(String schemaName) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("schemaName", schemaName);
-        List<Map<String, Object>> list = mySQLGeneratorDao.queryList(params);
-        return list;
     }
 
     /**
@@ -236,11 +239,24 @@ public class GeneratorService {
         return null;
     }
 
+    /**
+     * 查询所有数据库
+     *
+     * @return 数据库名称
+     */
     public List<String> listAllSchema() {
         return mySQLGeneratorDao.querySchemas();
     }
 
-    public String generateCode(String schemaName, String tableName, String filename) {
+    /**
+     * 生成代码片段
+     *
+     * @param schemaName 数据库名
+     * @param tableName  表名
+     * @param filename   文件名
+     * @return 代码片段
+     */
+    public String generateCodeText(String schemaName, String tableName, String filename) {
         //查询表信息
         TableEntity tableEntity = mySQLGeneratorDao.queryTable(schemaName, tableName);
 
