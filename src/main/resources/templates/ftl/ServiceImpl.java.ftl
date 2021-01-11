@@ -16,7 +16,7 @@ import ${package}.${moduleName}.service.${className}Service;
 * ${comments}
 *
 * @author ${author} ${email}
-* @date ${datetime}
+* @since ${datetime}
 */
 @Service("${classname}Service")
 public class ${className}ServiceImpl extends ServiceImpl<${className}Dao, ${className}Entity> implements ${className}Service {

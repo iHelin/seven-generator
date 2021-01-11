@@ -10,7 +10,7 @@ import java.util.Map;
  * ${comments}
  *
  * @author ${author} ${email}
- * @date ${datetime}
+ * @since ${datetime}
  */
 public interface ${className}Service extends IService<${className}Entity> {
 

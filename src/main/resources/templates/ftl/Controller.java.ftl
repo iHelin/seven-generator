@@ -17,7 +17,7 @@ import ${package}.common.utils.R;
  * ${comments}
  *
  * @author ${author} ${email}
- * @date ${datetime}
+ * @since ${datetime}
  */
 @RestController
 @RequestMapping("${moduleName}/${pathName}")
