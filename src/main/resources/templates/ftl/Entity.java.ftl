@@ -32,11 +32,11 @@ private static final long serialVersionUID = 1L;
 <#list columns as column>
 
     public ${column.attrType} get${column.attrName}(){
-        return ${column.attrname}
+        return ${column.attrname};
     }
 
-    public set${column.attrName}(${column.attrType} ${column.attrname}){
-        this.${column.attrname} = ${column.attrname}
+    public void set${column.attrName}(${column.attrType} ${column.attrname}){
+        this.${column.attrname} = ${column.attrname};
     }
 </#list>
 
