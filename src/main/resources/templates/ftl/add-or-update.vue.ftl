@@ -31,7 +31,6 @@
                     ${column.attrname}: 0,
                     <#else>
                     ${column.attrname}: ''<#if column_index+1 != columns?size>, </#if>
-
                     </#if>
                     </#list>
                 },
@@ -41,7 +40,6 @@
                     ${column.attrname}: [
                         {required: true, message: '${column.comments}不能为空', trigger: 'blur'}
                     ]<#if column_index+1 != columns?size>, </#if>
-
                     </#if>
                     </#list>
                 }
