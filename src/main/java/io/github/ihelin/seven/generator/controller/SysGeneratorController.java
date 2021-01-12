@@ -46,8 +46,8 @@ public class SysGeneratorController {
     public R code(@RequestParam String schemaName,
                   @RequestParam String tableName,
                   @RequestParam String fileName) {
-        String code = generatorService.generateCodeText(schemaName, tableName, fileName);
-        return R.ok().put("data", code);
+        String codeText = generatorService.generateCodeText(schemaName, tableName, fileName);
+        return R.ok().put("data", codeText);
     }
 
 }

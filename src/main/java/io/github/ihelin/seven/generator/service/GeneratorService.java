@@ -193,6 +193,7 @@ public class GeneratorService {
         tableEntity.setColumns(columns);
 
         Configuration config = getConfig();
+
         return generateCodeText(tableEntity, filename, config);
     }
 
