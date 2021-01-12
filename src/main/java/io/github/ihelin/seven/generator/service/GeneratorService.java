@@ -94,17 +94,18 @@ public class GeneratorService {
     }
 
     /**
+     * sys_menu => SysMenu
      * 列名转换成Java属性名
      */
-    public String columnToJava(String columnName) {
-        return WordUtils.capitalizeFully(columnName, new char[]{'_'}).replace("_", "");
+    public String columnToJava(String text) {
+        return WordUtils.capitalizeFully(text, new char[]{'_'}).replace("_", "");
     }
 
     /**
      * 表名转换成Java类名
      */
     public String tableToJava(String tableName, String[] tablePrefixArray) {
-        if (null != tablePrefixArray && tablePrefixArray.length > 0) {
+        if (tablePrefixArray != null && tablePrefixArray.length > 0) {
             for (String tablePrefix : tablePrefixArray) {
                 if (tableName.startsWith(tablePrefix)) {
                     tableName = tableName.replaceFirst(tablePrefix, "");
