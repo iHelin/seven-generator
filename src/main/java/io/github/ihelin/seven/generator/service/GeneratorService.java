@@ -82,7 +82,7 @@ public class GeneratorService {
         for (String template : templates) {
             //渲染模板
             try {
-                String codeText = generateCodeText(tableEntity, template);
+                String codeText = generateCodeText(tableEntity, template, config);
                 //添加到zip
                 zip.putNextEntry(new ZipEntry(getFileName(template, tableEntity.getClassName(), config.getString("package"), config.getString("moduleName"))));
                 IOUtils.write(codeText, zip, "UTF-8");
@@ -191,7 +191,9 @@ public class GeneratorService {
         //查询列信息
         List<ColumnEntity> columns = mySQLGeneratorDao.queryColumns(schemaName, tableName);
         tableEntity.setColumns(columns);
-        return generateCodeText(tableEntity, filename);
+
+        Configuration config = getConfig();
+        return generateCodeText(tableEntity, filename, config);
     }
 
     /**
@@ -201,8 +203,7 @@ public class GeneratorService {
      * @param filename    文件名
      * @return 代码片段
      */
-    public String generateCodeText(TableEntity tableEntity, String filename) {
-        Configuration config = getConfig();
+    public String generateCodeText(TableEntity tableEntity, String filename, Configuration config) {
 
         //表名转换成Java类名
         String className = tableToJava(tableEntity.getTableName(), config.getStringArray("tablePrefix"));
