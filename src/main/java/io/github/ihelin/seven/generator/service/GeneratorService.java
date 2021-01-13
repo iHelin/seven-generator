@@ -134,40 +134,40 @@ public class GeneratorService {
         if (StringUtils.isNotBlank(packageName)) {
             packagePath += packageName.replace(".", File.separator) + File.separator + moduleName + File.separator;
         }
-        if (template.contains("Entity.java.ftl")) {
+        if (template.contains("Entity.java")) {
             return packagePath + "entity" + File.separator + className + "Entity.java";
         }
 
-        if (template.contains("Dao.java.ftl")) {
+        if (template.contains("Dao.java")) {
             return packagePath + "dao" + File.separator + className + "Dao.java";
         }
 
-        if (template.contains("Service.java.ftl")) {
+        if (template.contains("Service.java")) {
             return packagePath + "service" + File.separator + className + "Service.java";
         }
 
-        if (template.contains("ServiceImpl.java.ftl")) {
+        if (template.contains("ServiceImpl.java")) {
             return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
         }
 
-        if (template.contains("Controller.java.ftl")) {
+        if (template.contains("Controller.java")) {
             return packagePath + "controller" + File.separator + className + "Controller.java";
         }
 
-        if (template.contains("Dao.xml.ftl")) {
+        if (template.contains("Dao.xml")) {
             return "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + moduleName + File.separator + className + "Dao.xml";
         }
 
-        if (template.contains("menu.sql.ftl")) {
+        if (template.contains("menu.sql")) {
             return className.toLowerCase() + "_menu.sql";
         }
 
-        if (template.contains("index.vue.ftl")) {
+        if (template.contains("index.vue")) {
             return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" +
                     File.separator + moduleName + File.separator + className.toLowerCase() + ".vue";
         }
 
-        if (template.contains("add-or-update.vue.ftl")) {
+        if (template.contains("add-or-update.vue")) {
             return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" +
                     File.separator + moduleName + File.separator + className.toLowerCase() + "-add-or-update.vue";
         }
