@@ -223,7 +223,7 @@ public class GeneratorService {
             columnEntity.setAttrname(StringUtils.uncapitalize(attrName));
 
             //列的数据类型，转换成Java类型
-            String attrType = config.getString(columnEntity.getDataType());
+            String attrType = config.getString(columnEntity.getDataType().toLowerCase());
             columnEntity.setAttrType(attrType);
 
             if (!hasBigDecimal && "BigDecimal".equals(attrType)) {
