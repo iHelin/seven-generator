@@ -62,7 +62,7 @@
 </template>
 
 <script>
-    import AddOrUpdate from './${tableEntity.classname?lower_case}-add-or-update'
+    import AddOrUpdate from './'
 
     export default {
         data() {
@@ -83,12 +83,12 @@
             AddOrUpdate
         },
         activated() {
-            this.getDataList()
+            this.getDataList();
         },
         methods: {
             // 获取数据列表
             getDataList() {
-                this.dataListLoading = true
+                this.dataListLoading = true;
                 this.$http({
                     url: '/${moduleName}/${tableEntity.classname?lower_case}/list',
                     method: 'get',
@@ -99,43 +99,41 @@
                     }
                 }).then(({data}) => {
                     if (data && data.code === 0) {
-                        this.dataList = data.data.list
-                        this.totalPage = data.data.totalCount
+                        this.dataList = data.data.list;
+                        this.totalPage = data.data.totalCount;
                     } else {
-                        this.dataList = []
-                        this.totalPage = 0
+                        this.dataList = [];
+                        this.totalPage = 0;
                     }
-                    this.dataListLoading = false
-                })
+                    this.dataListLoading = false;
+                });
             },
             // 每页数
             sizeChangeHandle(val) {
-                this.pageSize = val
-                this.pageIndex = 1
-                this.getDataList()
+                this.pageSize = val;
+                this.pageIndex = 1;
+                this.getDataList();
             },
             // 当前页
             currentChangeHandle(val) {
-                this.pageIndex = val
-                this.getDataList()
+                this.pageIndex = val;
+                this.getDataList();
             },
             // 多选
             selectionChangeHandle(val) {
-                this.dataListSelections = val
+                this.dataListSelections = val;
             },
             // 新增 / 修改
             addOrUpdateHandle(id) {
-                this.addOrUpdateVisible = true
+                this.addOrUpdateVisible = true;
                 this.$nextTick(() => {
-                    this.$refs.addOrUpdate.init(id)
-                })
+                    this.$refs.addOrUpdate.init(id);
+                });
             },
             // 删除
             deleteHandle(id) {
-                let ids = id ? [id] : this.dataListSelections.map(item => {
-                    return item.${tableEntity.pk.attrname}
-                })
-                this.$confirm(${r"`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`"}, '提示', {
+                let ids = id ? [id] : this.dataListSelections.map(item => item.${tableEntity.pk.attrname});
+                this.$confirm(${r"`确定对[id=${"}ids.join(',')${r"}]进行[${id"} ? '删除' : '批量删除'${r"}]操作?`"}, '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -151,14 +149,14 @@
                                 type: 'success',
                                 duration: 1500,
                                 onClose: () => {
-                                    this.getDataList()
+                                    this.getDataList();
                                 }
-                            })
+                            });
                         } else {
-                            this.$message.error(data.msg)
+                            this.$message.error(data.msg);
                         }
-                    })
-                })
+                    });
+                });
             }
         }
     }

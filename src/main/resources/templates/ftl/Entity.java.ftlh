@@ -21,7 +21,6 @@ public class ${tableEntity.className}Entity implements Serializable {
     private static final long serialVersionUID = 1L;
 
 <#list tableEntity.columns as column>
-
     <#if column.columnComment?? && column.columnComment!=''>
     /**
     * ${column.columnComment}
@@ -38,13 +37,13 @@ public class ${tableEntity.className}Entity implements Serializable {
 <#list tableEntity.columns as column>
 
     <#if column.attrType??>
-    public ${column.attrType} get${column.attrName}(){
+    public ${column.attrType} get${column.attrname?cap_first?uncap_first}(){
         return ${column.attrname};
     }
     </#if>
 
     <#if column.attrType??>
-    public void set${column.attrName}(${column.attrType} ${column.attrname}){
+    public void set${column.attrname?cap_first}(${column.attrType} ${column.attrname}){
         this.${column.attrname} = ${column.attrname};
     }
     </#if>

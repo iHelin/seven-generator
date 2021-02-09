@@ -7,7 +7,7 @@
                  label-width="80px">
             <#list tableEntity.columns as column>
                 <#if column.columnName != tableEntity.pk.columnName>
-                    <el-form-item label="${column.columnComment}" prop="${column.attrname}">
+                    <el-form-item label="${(column.columnComment?? && column.columnComment!='')?string(column.columnComment,column.attrname)}" prop="${column.attrname}">
                         <el-input v-model="dataForm.${column.attrname}" placeholder="${column.columnComment}"></el-input>
                     </el-form-item>
                 </#if>
@@ -28,9 +28,9 @@
                 dataForm: {
                     <#list tableEntity.columns as column>
                     <#if column.columnName == tableEntity.pk.columnName>
-                    ${column.attrname}: 0,
+                    ${column.attrname}: null,
                     <#else>
-                    ${column.attrname}: ''<#if column_index+1 != tableEntity.columns?size>, </#if>
+                    ${column.attrname}: ''<#if column_index != tableEntity.columns?size-1>, </#if>
                     </#if>
                     </#list>
                 },
@@ -39,7 +39,7 @@
                     <#if column.columnName != tableEntity.pk.columnName>
                     ${column.attrname}: [
                         {required: true, message: '${column.columnComment}不能为空', trigger: 'blur'}
-                    ]<#if column_index+1 != tableEntity.columns?size>, </#if>
+                    ]<#if column_index != tableEntity.columns?size-1>, </#if>
                     </#if>
                     </#list>
                 }
@@ -60,13 +60,13 @@
                             if (data && data.code === 0) {
                                 <#list tableEntity.columns as column>
                                 <#if column.columnName != tableEntity.pk.columnName>
-                                this.dataForm.${column.attrname} = data.data.${column.attrname}
+                                this.dataForm.${column.attrname} = data.data.${column.attrname};
                                 </#if>
                                 </#list>
                             }
-                        })
+                        });
                     }
-                })
+                });
             },
             // 表单提交
             dataFormSubmit() {
@@ -77,10 +77,10 @@
                             method: this.dataForm.${tableEntity.pk.attrname} ? 'put' : 'post',
                             data: {
                                 <#list tableEntity.columns as column>
-                                <#if column.columnName != tableEntity.pk.columnName>
-                                "${column.attrname}": this.dataForm.${column.attrname},
+                                <#if column.columnName == tableEntity.pk.columnName>
+                                ${column.attrname}: this.dataForm.${column.attrname},
                                 <#else>
-                                "${column.attrname}": this.dataForm.${column.attrname}<#if column_index+1 != tableEntity.columns?size>, </#if>
+                                ${column.attrname}: this.dataForm.${column.attrname}<#if column_index != tableEntity.columns?size-1>,</#if>
                                 </#if>
                                 </#list>
                             }
@@ -91,12 +91,12 @@
                                     type: 'success',
                                     duration: 1500,
                                     onClose: () => {
-                                        this.visible = false
-                                        this.$emit('refreshDataList')
+                                        this.visible = false;
+                                        this.$emit('refreshDataList');
                                     }
                                 })
                             } else {
-                                this.$message.error(data.msg)
+                                this.$message.error(data.msg);
                             }
                         })
                     }

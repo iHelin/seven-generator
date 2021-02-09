@@ -219,7 +219,6 @@ public class GeneratorService {
         for (ColumnEntity columnEntity : tableEntity.getColumns()) {
             //列名转换成Java属性名
             String attrName = columnToJava(columnEntity.getColumnName());
-            columnEntity.setAttrName(attrName);
             columnEntity.setAttrname(StringUtils.uncapitalize(attrName));
 
             //列的数据类型，转换成Java类型

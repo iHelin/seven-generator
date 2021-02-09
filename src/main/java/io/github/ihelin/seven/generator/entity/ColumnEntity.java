@@ -18,9 +18,6 @@ public class ColumnEntity {
 
     private String columnKey;
 
-    //属性名称(第一个字母大写)，如：user_name => UserName
-    private String attrName;
-
     //属性名称(第一个字母小写)，如：user_name => userName
     private String attrname;
 
@@ -60,14 +57,6 @@ public class ColumnEntity {
 
     public void setAttrname(String attrname) {
         this.attrname = attrname;
-    }
-
-    public String getAttrName() {
-        return attrName;
-    }
-
-    public void setAttrName(String attrName) {
-        this.attrName = attrName;
     }
 
     public String getAttrType() {
