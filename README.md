@@ -6,3 +6,7 @@
 - service
 - controller
 - vue
+
+## 使用说明
+1. 配置`application.yml`文件
+
