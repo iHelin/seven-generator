@@ -3,7 +3,7 @@ package ${package}.${moduleName}.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
-<#if hasBigDecimal==true>
+<#if hasBigDecimal>
 import java.math.BigDecimal;
 </#if>
 import java.io.Serializable;
@@ -21,24 +21,33 @@ public class ${tableEntity.className}Entity implements Serializable {
     private static final long serialVersionUID = 1L;
 
 <#list tableEntity.columns as column>
+
+    <#if column.columnComment?? && column.columnComment!=''>
     /**
     * ${column.columnComment}
     */
-    <#if column.columnName == tableEntity.pk.columnName>
-        @TableId
     </#if>
+    <#if column.columnName == tableEntity.pk.columnName>
+    @TableId
+    </#if>
+    <#if column.attrType??>
     private ${column.attrType} ${column.attrname};
+    </#if>
 </#list>
 
 <#list tableEntity.columns as column>
 
+    <#if column.attrType??>
     public ${column.attrType} get${column.attrName}(){
         return ${column.attrname};
     }
+    </#if>
 
+    <#if column.attrType??>
     public void set${column.attrName}(${column.attrType} ${column.attrname}){
         this.${column.attrname} = ${column.attrname};
     }
+    </#if>
 </#list>
 
     @Override

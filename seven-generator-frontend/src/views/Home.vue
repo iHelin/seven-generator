@@ -70,7 +70,7 @@
                             <el-button type="text"
                                        size="small"
                                        @click="generateSingle(scope.row)">
-                                生成
+                                预览
                             </el-button>
                         </template>
                     </el-table-column>
