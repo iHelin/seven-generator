@@ -5,6 +5,7 @@ const resolve = dir => {
 };
 
 module.exports = {
+    outputDir:'../src/main/resources/static',
     chainWebpack: config => {
         config.resolve.alias
             .set('@', resolve('src')) // key,value自行定义，比如.set('@@', resolve('src/components'))
