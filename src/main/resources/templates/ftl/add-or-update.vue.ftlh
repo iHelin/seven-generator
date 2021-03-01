@@ -52,8 +52,8 @@
                 this.$nextTick(() => {
                     this.$refs['dataForm'].resetFields()
                     if (this.dataForm.${tableEntity.pk.attrname}) {
-                        this.$http({
-                            url: `/${moduleName}/${tableEntity.classname?lower_case}/info/${r'${this.dataForm'}.${tableEntity.pk.attrname}}`,
+                        axios({
+                            url: '/${moduleName}/${tableEntity.classname?lower_case}/info/' + this.dataForm.${tableEntity.pk.attrname},
                             method: 'get',
                             params: {}
                         }).then(({data}) => {
@@ -72,8 +72,8 @@
             dataFormSubmit() {
                 this.$refs['dataForm'].validate((valid) => {
                     if (valid) {
-                        this.$http({
-                            url: `/${moduleName}/${tableEntity.classname?lower_case}/${r'${this.dataForm'}.${tableEntity.pk.attrname} ? 'update' : 'save'}`,
+                        axios({
+                            url: '/${moduleName}/${tableEntity.classname?lower_case}/' + (this.dataForm.${tableEntity.pk.attrname} ? 'update' : 'save'),
                             method: this.dataForm.${tableEntity.pk.attrname} ? 'put' : 'post',
                             data: {
                                 <#list tableEntity.columns as column>

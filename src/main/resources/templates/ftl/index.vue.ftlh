@@ -1,15 +1,15 @@
 <template>
     <div>
-        <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+        <el-form :inline="true" @keyup.enter.native="getDataList()">
             <el-form-item>
-                <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
+                <el-input v-model="key" placeholder="参数名" clearable></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button @click="getDataList()">查询</el-button>
-                <el-button v-if="isAuth('${moduleName}:${tableEntity.classname?lower_case}:save')" type="primary" @click="addOrUpdateHandle()">
+                <el-button type="primary" @click="addOrUpdateHandle()">
                     新增
                 </el-button>
-                <el-button v-if="isAuth('${moduleName}:${tableEntity.classname?lower_case}:delete')" type="danger" @click="deleteHandle()"
+                <el-button type="danger" @click="deleteHandle()"
                            :disabled="dataListSelections.length <= 0">批量删除
                 </el-button>
             </el-form-item>
@@ -41,9 +41,11 @@
                     width="150"
                     label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.${tableEntity.pk.attrname})">修改
+                    <el-button type="text" size="small"
+                               @click="addOrUpdateHandle(scope.row.${tableEntity.pk.attrname})">修改
                     </el-button>
-                    <el-button type="text" size="small" @click="deleteHandle(scope.row.${tableEntity.pk.attrname})">删除</el-button>
+                    <el-button type="text" size="small" @click="deleteHandle(scope.row.${tableEntity.pk.attrname})">删除
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -67,9 +69,7 @@
     export default {
         data() {
             return {
-                dataForm: {
-                    key: ''
-                },
+                key: '',
                 dataList: [],
                 pageIndex: 1,
                 pageSize: 10,
@@ -89,18 +89,18 @@
             // 获取数据列表
             getDataList() {
                 this.dataListLoading = true;
-                this.$http({
+                axios({
                     url: '/${moduleName}/${tableEntity.classname?lower_case}/list',
                     method: 'get',
                     params: {
                         'page': this.pageIndex,
                         'limit': this.pageSize,
-                        'key': this.dataForm.key
+                        'key': this.key
                     }
                 }).then(({data}) => {
                     if (data && data.code === 0) {
                         this.dataList = data.data.list;
-                        this.totalPage = data.data.totalCount;
+                        this.totalPage = data.data.total;
                     } else {
                         this.dataList = [];
                         this.totalPage = 0;
@@ -133,15 +133,15 @@
             // 删除
             deleteHandle(id) {
                 let ids = id ? [id] : this.dataListSelections.map(item => item.${tableEntity.pk.attrname});
-                this.$confirm(${r"`确定对[id=${"}ids.join(',')${r"}]进行[${id"} ? '删除' : '批量删除'${r"}]操作?`"}, '提示', {
+                this.$confirm("确定删除？", '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.$http({
+                    axios({
                         url: '/${moduleName}/${tableEntity.classname?lower_case}/delete',
                         method: 'delete',
-                        data: this.$http.adornData(ids, false)
+                        data: ids
                     }).then(({data}) => {
                         if (data && data.code === 0) {
                             this.$message({

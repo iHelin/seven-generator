@@ -30,10 +30,13 @@ public class ${tableEntity.className}Controller {
      * 列表
      */
     @GetMapping("/list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = ${tableEntity.classname}Service.queryPage(params);
-
-        return R.ok().put("data", page);
+    public R list(Long page, Long limit, String key){
+        QueryWrapper<${tableEntity.className}Entity> queryWrapper = new QueryWrapper<>();
+        if (StringUtils.hasText(key)) {
+            queryWrapper.eq("id", key);
+        }
+        IPage<${tableEntity.className}Entity> data = ${tableEntity.classname}Service.page(new Page<>(page, limit), queryWrapper);
+        return R.ok(data);
     }
 
 
@@ -69,8 +72,8 @@ public class ${tableEntity.className}Controller {
      * 删除
      */
     @DeleteMapping("/delete")
-    public R delete(@RequestBody ${tableEntity.pk.attrType}[] ${tableEntity.pk.attrname}s){
-		${tableEntity.classname}Service.removeByIds(Arrays.asList(${tableEntity.pk.attrname}s));
+    public R delete(@RequestBody List<${tableEntity.pk.attrType}> ${tableEntity.pk.attrname}s){
+		${tableEntity.classname}Service.removeByIds(${tableEntity.pk.attrname}s);
         return R.ok();
     }
 
