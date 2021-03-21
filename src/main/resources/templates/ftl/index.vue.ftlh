@@ -89,7 +89,7 @@
             // 获取数据列表
             getDataList() {
                 this.dataListLoading = true;
-                axios({
+                this.$http({
                     url: '/${moduleName}/${tableEntity.classname?lower_case}/list',
                     method: 'get',
                     params: {
@@ -99,7 +99,7 @@
                     }
                 }).then(({data}) => {
                     if (data && data.code === 0) {
-                        this.dataList = data.data.list;
+                        this.dataList = data.data.records;
                         this.totalPage = data.data.total;
                     } else {
                         this.dataList = [];
@@ -138,7 +138,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    axios({
+                    this.$http({
                         url: '/${moduleName}/${tableEntity.classname?lower_case}/delete',
                         method: 'delete',
                         data: ids

@@ -4,7 +4,7 @@
             :close-on-click-modal="false"
             :visible.sync="visible">
         <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()"
-                 label-width="80px">
+                 label-width="100px">
             <#list tableEntity.columns as column>
                 <#if column.columnName != tableEntity.pk.columnName>
                     <el-form-item label="${(column.columnComment?? && column.columnComment!='')?string(column.columnComment,column.attrname)}" prop="${column.attrname}">
@@ -52,7 +52,7 @@
                 this.$nextTick(() => {
                     this.$refs['dataForm'].resetFields()
                     if (this.dataForm.${tableEntity.pk.attrname}) {
-                        axios({
+                        this.$http({
                             url: '/${moduleName}/${tableEntity.classname?lower_case}/info/' + this.dataForm.${tableEntity.pk.attrname},
                             method: 'get',
                             params: {}
@@ -72,7 +72,7 @@
             dataFormSubmit() {
                 this.$refs['dataForm'].validate((valid) => {
                     if (valid) {
-                        axios({
+                        this.$http({
                             url: '/${moduleName}/${tableEntity.classname?lower_case}/' + (this.dataForm.${tableEntity.pk.attrname} ? 'update' : 'save'),
                             method: this.dataForm.${tableEntity.pk.attrname} ? 'put' : 'post',
                             data: {

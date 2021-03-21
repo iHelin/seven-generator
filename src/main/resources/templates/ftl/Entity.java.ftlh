@@ -16,9 +16,7 @@ import java.util.Date;
 * @since ${datetime?string('yyyy-MM-dd HH:mm:ss')}
 */
 @TableName("${tableEntity.tableName}")
-public class ${tableEntity.className}Entity implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class ${tableEntity.className}Entity {
 
 <#list tableEntity.columns as column>
     <#if column.columnComment?? && column.columnComment!=''>

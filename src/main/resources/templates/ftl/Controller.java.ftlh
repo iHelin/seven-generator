@@ -1,16 +1,16 @@
 package ${package}.${moduleName}.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-
 import ${package}.${moduleName}.entity.${tableEntity.className}Entity;
 import ${package}.${moduleName}.service.${tableEntity.className}Service;
-import ${package}.common.utils.PageUtils;
 import ${package}.common.utils.R;
 
+import java.util.List;
 
 
 /**
@@ -30,7 +30,7 @@ public class ${tableEntity.className}Controller {
      * 列表
      */
     @GetMapping("/list")
-    public R list(Long page, Long limit, String key){
+    public R list(@RequestParam(defaultValue = "1") Long page, @RequestParam(defaultValue = "10") Long limit, String key){
         QueryWrapper<${tableEntity.className}Entity> queryWrapper = new QueryWrapper<>();
         if (StringUtils.hasText(key)) {
             queryWrapper.eq("id", key);
