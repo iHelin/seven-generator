@@ -3,12 +3,10 @@
 
 <mapper namespace="${package}.${moduleName}.dao.${tableEntity.className}Dao">
 
-    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="${package}.${moduleName}.entity.${tableEntity.className}Entity" id="${tableEntity.classname}Map">
         <#list tableEntity.columns as column>
             <result property="${column.attrname}" column="${column.columnName}"/>
         </#list>
     </resultMap>
-
 
 </mapper>
