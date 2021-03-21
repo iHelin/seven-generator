@@ -66,7 +66,6 @@ public class GeneratorService {
             tableEntity.setColumns(columns);
             generatorCode(tableEntity, zip);
         }
-
         IOUtils.closeQuietly(zip);
     }
 
