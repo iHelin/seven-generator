@@ -64,7 +64,7 @@
 </template>
 
 <script>
-    import AddOrUpdate from './'
+    import AddOrUpdate from './add-or-update.vue'
 
     export default {
         data() {
