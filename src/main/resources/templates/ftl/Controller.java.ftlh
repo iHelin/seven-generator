@@ -30,11 +30,11 @@ public class ${tableEntity.className}Controller {
      * 列表
      */
     @GetMapping("/list")
-    public R list(@RequestParam(defaultValue = "1") Long page, @RequestParam(defaultValue = "10") Long limit, String key){
+    public R list(@RequestParam(defaultValue = "1") Long page,
+                  @RequestParam(defaultValue = "10") Long limit,
+                  String key){
         QueryWrapper<${tableEntity.className}Entity> queryWrapper = new QueryWrapper<>();
-        if (StringUtils.hasText(key)) {
-            queryWrapper.eq("id", key);
-        }
+        queryWrapper.eq(StringUtils.hasText(key), "id", key);
         IPage<${tableEntity.className}Entity> data = ${tableEntity.classname}Service.page(new Page<>(page, limit), queryWrapper);
         return R.ok(data);
     }
@@ -54,8 +54,8 @@ public class ${tableEntity.className}Controller {
      * 新增
      */
     @PostMapping("/save")
-    public R save(@RequestBody ${tableEntity.className}Entity ${tableEntity.classname}){
-		${tableEntity.classname}Service.save(${tableEntity.classname});
+    public R save(@RequestBody ${tableEntity.className}Entity ${tableEntity.classname}Entity){
+		${tableEntity.classname}Service.save(${tableEntity.classname}Entity);
         return R.ok();
     }
 
@@ -63,8 +63,8 @@ public class ${tableEntity.className}Controller {
      * 修改
      */
     @PutMapping("/update")
-    public R update(@RequestBody ${tableEntity.className}Entity ${tableEntity.classname}){
-		${tableEntity.classname}Service.updateById(${tableEntity.classname});
+    public R update(@RequestBody ${tableEntity.className}Entity ${tableEntity.classname}Entity){
+		${tableEntity.classname}Service.updateById(${tableEntity.classname}Entity);
         return R.ok();
     }
 
