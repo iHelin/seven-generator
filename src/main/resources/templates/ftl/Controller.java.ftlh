@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ${package}.${moduleName}.entity.${tableEntity.className}Entity;
@@ -30,6 +31,7 @@ public class ${tableEntity.className}Controller {
      * 列表
      */
     @GetMapping("/list")
+    @PreAuthorize("hasAuthority('${moduleName}:${tableEntity.classname?lower_case}:list')")
     public R list(@RequestParam(defaultValue = "1") Long page,
                   @RequestParam(defaultValue = "10") Long limit,
                   String key){
@@ -44,6 +46,7 @@ public class ${tableEntity.className}Controller {
      * 信息
      */
     @GetMapping("/info/{${tableEntity.pk.attrname}}")
+    @PreAuthorize("hasAuthority('${moduleName}:${tableEntity.classname?lower_case}:info')")
     public R info(@PathVariable("${tableEntity.pk.attrname}") ${tableEntity.pk.attrType} ${tableEntity.pk.attrname}){
 		${tableEntity.className}Entity ${tableEntity.classname} = ${tableEntity.classname}Service.getById(${tableEntity.pk.attrname});
 
@@ -54,6 +57,7 @@ public class ${tableEntity.className}Controller {
      * 新增
      */
     @PostMapping("/save")
+    @PreAuthorize("hasAuthority('${moduleName}:${tableEntity.classname?lower_case}:save')")
     public R save(@RequestBody ${tableEntity.className}Entity ${tableEntity.classname}Entity){
 		${tableEntity.classname}Service.save(${tableEntity.classname}Entity);
         return R.ok();
@@ -63,6 +67,7 @@ public class ${tableEntity.className}Controller {
      * 修改
      */
     @PutMapping("/update")
+    @PreAuthorize("hasAuthority('${moduleName}:${tableEntity.classname?lower_case}:update')")
     public R update(@RequestBody ${tableEntity.className}Entity ${tableEntity.classname}Entity){
 		${tableEntity.classname}Service.updateById(${tableEntity.classname}Entity);
         return R.ok();
@@ -72,6 +77,7 @@ public class ${tableEntity.className}Controller {
      * 删除
      */
     @DeleteMapping("/delete")
+    @PreAuthorize("hasAuthority('${moduleName}:${tableEntity.classname?lower_case}:delete')")
     public R delete(@RequestBody List<${tableEntity.pk.attrType}> ${tableEntity.pk.attrname}s){
 		${tableEntity.classname}Service.removeByIds(${tableEntity.pk.attrname}s);
         return R.ok();

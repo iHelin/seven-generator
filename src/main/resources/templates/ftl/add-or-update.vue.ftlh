@@ -50,7 +50,7 @@
                 this.dataForm.${tableEntity.pk.attrname} = id;
                 this.visible = true;
                 this.$nextTick(() => {
-                    this.$refs['dataForm'].resetFields()
+                    this.$refs['dataForm'].resetFields();
                     if (this.dataForm.${tableEntity.pk.attrname}) {
                         this.$http({
                             url: '/${moduleName}/${tableEntity.classname?lower_case}/info/' + this.dataForm.${tableEntity.pk.attrname},
@@ -63,6 +63,8 @@
                                 this.dataForm.${column.attrname} = data.data.${column.attrname};
                                 </#if>
                                 </#list>
+                            } else {
+                                this.$message.error(data.msg);
                             }
                         });
                     }
@@ -94,11 +96,11 @@
                                         this.visible = false;
                                         this.$emit('refreshDataList');
                                     }
-                                })
+                                });
                             } else {
                                 this.$message.error(data.msg);
                             }
-                        })
+                        });
                     }
                 })
             }

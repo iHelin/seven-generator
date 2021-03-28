@@ -5,12 +5,18 @@
                 <el-input v-model="key" placeholder="参数名" clearable></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button @click="getDataList()">查询</el-button>
-                <el-button type="primary" @click="addOrUpdateHandle()">
+                <el-button v-if="isAuth('${moduleName}:${tableEntity.classname?lower_case}:list')"
+                           @click="getDataList()">查询</el-button>
+                <el-button v-if="isAuth('${moduleName}:${tableEntity.classname?lower_case}:save')"
+                           type="primary"
+                           @click="addOrUpdateHandle()">
                     新增
                 </el-button>
-                <el-button type="danger" @click="deleteHandle()"
-                           :disabled="dataListSelections.length <= 0">批量删除
+                <el-button v-if="isAuth('${moduleName}:${tableEntity.classname?lower_case}:delete')"
+                           type="danger"
+                           @click="deleteHandle()"
+                           :disabled="dataListSelections.length <= 0">
+                    批量删除
                 </el-button>
             </el-form-item>
         </el-form>
@@ -41,10 +47,15 @@
                     width="150"
                     label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" size="small"
-                               @click="addOrUpdateHandle(scope.row.${tableEntity.pk.attrname})">修改
+                    <el-button v-if="isAuth('${moduleName}:${tableEntity.classname?lower_case}:update')"
+                               type="text"
+                               size="small"
+                               @click="addOrUpdateHandle(scope.row.${tableEntity.pk.attrname})">
+                        修改
                     </el-button>
-                    <el-button type="text" size="small" @click="deleteHandle(scope.row.${tableEntity.pk.attrname})">删除
+                    <el-button v-if="isAuth('${moduleName}:${tableEntity.classname?lower_case}:delete')"
+                               type="text" size="small" @click="deleteHandle(scope.row.${tableEntity.pk.attrname})">
+                        删除
                     </el-button>
                 </template>
             </el-table-column>
@@ -88,6 +99,9 @@
         methods: {
             // 获取数据列表
             getDataList() {
+                if(!this.isAuth('${moduleName}:${tableEntity.classname?lower_case}:list')){
+                    return;
+                }
                 this.dataListLoading = true;
                 this.$http({
                     url: '/${moduleName}/${tableEntity.classname?lower_case}/list',
@@ -102,6 +116,7 @@
                         this.dataList = data.data.records;
                         this.totalPage = data.data.total;
                     } else {
+                        this.$message.error(data.msg);
                         this.dataList = [];
                         this.totalPage = 0;
                     }
