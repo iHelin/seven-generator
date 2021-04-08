@@ -48,8 +48,7 @@ public class ${tableEntity.className}Controller {
     @GetMapping("/info/{${tableEntity.pk.attrname}}")
     @PreAuthorize("hasAuthority('${moduleName}:${tableEntity.classname?lower_case}:info')")
     public R info(@PathVariable("${tableEntity.pk.attrname}") ${tableEntity.pk.attrType} ${tableEntity.pk.attrname}){
-		${tableEntity.className}Entity ${tableEntity.classname} = ${tableEntity.classname}Service.getById(${tableEntity.pk.attrname});
-
+        ${tableEntity.className}Entity ${tableEntity.classname} = ${tableEntity.classname}Service.getById(${tableEntity.pk.attrname});
         return R.ok().put("data", ${tableEntity.classname});
     }
 
@@ -59,7 +58,7 @@ public class ${tableEntity.className}Controller {
     @PostMapping("/save")
     @PreAuthorize("hasAuthority('${moduleName}:${tableEntity.classname?lower_case}:save')")
     public R save(@RequestBody ${tableEntity.className}Entity ${tableEntity.classname}Entity){
-		${tableEntity.classname}Service.save(${tableEntity.classname}Entity);
+        ${tableEntity.classname}Service.save(${tableEntity.classname}Entity);
         return R.ok();
     }
 
@@ -69,7 +68,7 @@ public class ${tableEntity.className}Controller {
     @PutMapping("/update")
     @PreAuthorize("hasAuthority('${moduleName}:${tableEntity.classname?lower_case}:update')")
     public R update(@RequestBody ${tableEntity.className}Entity ${tableEntity.classname}Entity){
-		${tableEntity.classname}Service.updateById(${tableEntity.classname}Entity);
+        ${tableEntity.classname}Service.updateById(${tableEntity.classname}Entity);
         return R.ok();
     }
 
@@ -79,7 +78,7 @@ public class ${tableEntity.className}Controller {
     @DeleteMapping("/delete")
     @PreAuthorize("hasAuthority('${moduleName}:${tableEntity.classname?lower_case}:delete')")
     public R delete(@RequestBody List<${tableEntity.pk.attrType}> ${tableEntity.pk.attrname}s){
-		${tableEntity.classname}Service.removeByIds(${tableEntity.pk.attrname}s);
+        ${tableEntity.classname}Service.removeByIds(${tableEntity.pk.attrname}s);
         return R.ok();
     }
 
