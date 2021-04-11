@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * 代码生成器
+ * Seven 代码生成器
  *
  * @author iHelin ihelin@outlook.com
  * @since 2021-01-07 12:43
